@@ -30,23 +30,24 @@ func NewClient(appSecret string, packageName []string) *MiPush {
 
 //----------------------------------------Sender----------------------------------------//
 // 根据registrationId，发送消息到指定设备上
-func (m *MiPush) Send(ctx context.Context, msg *Message, regID string) (*SendResult, error) {
+func (m *MiPush) Send(ctx context.Context, msg *Message, regID string) ([]byte, error) {
 	params := m.assembleSendParams(msg, regID)
 	bytes, err := m.doPost(ctx, m.host+RegURL, params)
-	if err != nil {
-		return nil, err
-	}
-	var result SendResult
-	err = json.Unmarshal(bytes, &result)
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
+	return bytes, err
+	//if err != nil {
+	//	return nil, err
+	//}
+	//var result SendResult
+	//err = json.Unmarshal(bytes, &result)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return &result, nil
 }
 
 // 根据regIds，发送消息到指定的一组设备上
 // regIds的个数不得超过1000个。
-func (m *MiPush) SendToList(ctx context.Context, msg *Message, regIDList []string) (*SendResult, error) {
+func (m *MiPush) SendToList(ctx context.Context, msg *Message, regIDList []string) ([]byte, error) {
 	if len(regIDList) == 0 || len(regIDList) > 1000 {
 		panic("wrong number regIDList")
 	}
@@ -62,7 +63,11 @@ func (m *MiPush) SendTargetMessageList(ctx context.Context, msgList []*TargetedM
 		return nil, errors.New("empty msg")
 	}
 	if len(msgList) == 1 {
-		return m.Send(ctx, msgList[0].message, msgList[0].target)
+		//return m.Send(ctx, msgList[0].message, msgList[0].target)
+		d, err := m.Send(ctx, msgList[0].message, msgList[0].target)
+		var result SendResult
+		err = json.Unmarshal(d, &result)
+		return &result, err
 	}
 	params := m.assembleTargetMessageListParams(msgList)
 	var bytes []byte
