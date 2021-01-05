@@ -12,6 +12,9 @@ type Result struct {
 type SendResult struct {
 	Result
 	Data struct {
+		DayAcked string `json:"day_acked"`
+		BadRegIds string `json:"bad_regids"`
+		DayQuota string `json:"day_quota"`
 		ID string `json:"id,omitempty"`
 	} `json:"data,omitempty"`
 }
