@@ -3,7 +3,6 @@ package xiaomipush
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -626,7 +625,6 @@ func (m *MiPush) doPost(ctx context.Context, url string, form url.Values) ([]byt
 tryAgain:
 	res, err = ctxhttp.Do(ctx, client, req)
 	if err != nil {
-		fmt.Println("xiaomi push post err:", err, tryTime)
 		select {
 		case <-ctx.Done():
 			return nil, err
@@ -642,7 +640,6 @@ tryAgain:
 		panic("xiaomi response is nil")
 	}
 	defer res.Body.Close()
-	fmt.Println("res.StatusCode=", res.StatusCode)
 	if res.StatusCode != http.StatusOK {
 		return nil, errors.New("network error")
 	}
